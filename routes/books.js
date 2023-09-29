@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
 
 /* 
  * Dynamic route that handles GET requests to fetch a list of books of any specific genre
- * @return a JSON list of the books belonging to the genry specified in the request, along with a 200 status code, if successful.
+ * @return a JSON list of the books belonging to the genre specified in the request, along with a 200 status code, if successful.
  */
 router.get("/genre/:genre", async (req, res, next) =>{
     try {
