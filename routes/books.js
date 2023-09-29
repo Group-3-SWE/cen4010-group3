@@ -6,13 +6,21 @@ router.get("/", (req, res) => {
     res.send("This is the books route!");
 })
 
+/* 
+ * Dynamic route that handles GET requests to fetch a list of books of any specific genre
+ * @return a JSON list of the books belonging to the genry specified in the request, along with a 200 status code, if successful.
+ */
 router.get("/genre/:genre", async (req, res, next) =>{
     try {
-        // get the list of books belonging to a specific genre
+        // The genre to look is extracted from the URL.
+        // For instance, /books/genre/sci-fi would result in the request parameter being sci-fi.
         const { genre } = req.params
+
+        // Query for all the entries that match the desired genre.
         const listOfBooks = await Books.findAll({ where: {BGenre: genre} })
         return res.status(200).json({ listOfBooks })
     } catch(err){
+        // If an error happens, pass the request to the error handling route.
         next(err)
     }
 })
