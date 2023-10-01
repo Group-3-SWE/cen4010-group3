@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Books = sequelize.define('Books', {
       BISBN: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(13),
         primaryKey: true,
         autoIncrement: false,
       },
