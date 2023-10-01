@@ -2,6 +2,7 @@ const express = require("express")
 const morgan = require("morgan")
 const db = require("./tables")
 const booksRoutes = require("./routes/books") 
+const customerRoutes = require("./routes/customer") 
 const { NotFoundError } = require("./utils/errors")
 
 const app = express()
@@ -10,6 +11,7 @@ app.use(morgan("tiny"))
 app.use(express.json())
 
 app.use("/books", booksRoutes);
+app.use("/Hello_World", customerRoutes);
 
 app.use((req, res, next) => {
     return next(new NotFoundError())
@@ -30,3 +32,4 @@ db.sequelize.sync().then(() => {
         console.log(`Server listening on port ${port}`)
     });
 });
+

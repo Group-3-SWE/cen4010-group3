@@ -1,14 +1,10 @@
 //Require module
 const express = require('express');
-// Express Initialize
-const app = express();
+const router = express.Router()
+const { Customer } = require("../tables");
 
-const port = 3001
+router.get("/", (req, res) => {
+    res.send("Hello World!");
+});
 
-app.listen(port,()=> {
-    console.log('listen port 3001');
-})
-
-app.get('/hello_world', (req,res)=>{
-    res.send('Hello World');
-})
+module.exports = router
