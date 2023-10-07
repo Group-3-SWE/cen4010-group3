@@ -18,7 +18,25 @@ router.get("/genre/:genre", async (req, res, next) =>{
 
         // Query for all the entries that match the desired genre.
         const listOfBooks = await Books.findAll({ where: {BGenre: genre} })
-        return res.status(200).json({ listOfBooks })
+        return res.status(200).json(listOfBooks)
+    } catch(err){
+        // If an error happens, pass the request to the error handling route.
+        next(err)
+    }
+})
+
+/* 
+ * Endpoint that handles GET requests to fetch a list of the 10 most sold books, if there are at least 10.
+ * @return a JSON list of the 10 most sold books, along with a 200 status code, if successful.
+ */
+router.get("/bestsellers", async (req, res, next) =>{
+    try {
+        // Query for the 10 best selling books.
+        const bestSellers = await Books.findAll({ 
+            limit: 10,
+            order: [['BCopiesSold', 'DESC']]
+        })
+        return res.status(200).json(bestSellers)
     } catch(err){
         // If an error happens, pass the request to the error handling route.
         next(err)
