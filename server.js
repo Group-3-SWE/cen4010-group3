@@ -11,7 +11,7 @@ app.use(morgan("tiny"))
 app.use(express.json())
 
 app.use("/books", booksRoutes);
-app.use("/Hello_World", customerRoutes);
+app.use("/users", customerRoutes);
 
 app.use((req, res, next) => {
     return next(new NotFoundError())
