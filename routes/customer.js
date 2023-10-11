@@ -22,7 +22,7 @@ router.post("/createuser", async (req, res) => {
     
     const {UUser, UPassword, UEMAIL, UAddress, UName} = req.body;
 
-    if (!UUser || !UPassword || !UEMAIL){
+    if (!UUser || !UPassword){
         res.status(200).send('Please input required fields');
     }
     if (!UAddress){
@@ -36,17 +36,21 @@ router.post("/createuser", async (req, res) => {
             UUser
         }
     })
-    let emailExists = await User.findOne({
-        where: {
-            UEMAIL
+    if (UEMAIL){
+        let emailExists = await User.findOne({
+            where: {
+                UEMAIL
+            }
+        })
+        if (emailExists) {
+            res.status(203).send('Email already exists.');
+            return
         }
-    })
+    } else {
+        UEMAIL: null;
+    }
     if (userExists) {
         res.status(202).send('User already exists.');
-        return
-    }
-    if (emailExists) {
-        res.status(203).send('Email already exists.');
         return
     }
     try {
