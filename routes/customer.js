@@ -8,7 +8,7 @@ router.get("/", async (req, res, next) =>{
     try {
         // Query for all users.
         const vUser = await User.findAll({
-            raw: true
+            //raw: true
         });
         return res.status(201).json(vUser)
     } catch(err){
@@ -42,10 +42,12 @@ router.post("/createuser", async (req, res) => {
         }
     })
     if (userExists) {
-        res.status(202).send('User already exists.')
+        res.status(202).send('User already exists.');
+        return
     }
     if (emailExists) {
-        res.status(203).send('Email already exists.')
+        res.status(203).send('Email already exists.');
+        return
     }
     try {
         await User.create({UUser, UPassword, UEMAIL, UAddress, UName});
@@ -54,10 +56,12 @@ router.post("/createuser", async (req, res) => {
                 UUser
             }
         })
-        res.status(201).json(nUser.UUser)
+        res.status(201).json(nUser);
+        return
     }
     catch {
-        res.send("User Not Added")
+        res.send("User Not Added");
+        return
     }
 })
 
