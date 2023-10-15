@@ -1,58 +1,19 @@
-import { DataTypes } from 'sequelize';
-import  sequelize from './index.js';
-import { User } from './User.js';
-import { Book } from './Book.js';
-
-
-  export const Wishlist = sequelize.sequelize.define('Wishlist', {
-    WishlistId: {
-      type: DataTypes.INTEGER,
+module.exports = (sequelize, DataTypes) => {
+  const Wishlist = sequelize.define('Wishlist', {
+    AName: {
+      type: DataTypes.STRING(200),
       primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
     },
-    Name: {
-      type: DataTypes.STRING,
+    AUser: {
+      type: DataTypes.STRING(25),
       allowNull: false,
-      unique: true,
+      references: {
+        model: 'Users', 
+        key: 'UUser',
+      },
+      onDelete: 'CASCADE',
     },
-  
   });
 
-  Wishlist.belongsTo(User, {
-    foreignKey:{
-      name: 'UserId',
-      allowNull: false,
-    }
-  });
-
-  User.hasMany(Wishlist, {
-    foreignKey:{
-      name: 'UserId',
-      allowNull: false,
-    }
-    });
-
-    Book.belongsToMany(Wishlist, {
-      through:'books_wishlists',
-      foreignKey: 'BookId'
-    });
-
-    Wishlist.belongsToMany(Book, {
-      through:'books_wishlists',
-      foreignKey: 'WishlistId'
-    });
-  
-
-
-    export const create = (
-      Name, 
-      UserId,
-    ) => Wishlist.create({
-      Name,
-      UserId,
-    }).then((result) => ({status: 'success', data: result})) 
-    .catch((err) => ({
-      status: 'error',
-      data: err,
-    }));
+  return Wishlist;
+};
