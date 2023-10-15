@@ -7,9 +7,7 @@ const { User } = require("../tables");
 router.get("/", async (req, res, next) =>{
     try {
         // Query for all users.
-        const vUser = await User.findAll({
-            //raw: true
-        });
+        const vUser = await User.findAll();
         return res.status(201).json(vUser)
     } catch(err){
         // If an error happens, pass the request to the error handling route.
@@ -17,25 +15,34 @@ router.get("/", async (req, res, next) =>{
     }
 })
 
-
+//Creates a new user for the Users db
 router.post("/createuser", async (req, res) => {
     
     const {UUser, UPassword, UEMAIL, UAddress, UName} = req.body;
 
+    //Checks to see if Required fields are entere
     if (!UUser || !UPassword){
         res.status(200).send('Please input required fields');
+        return
     }
+
+    //If Address is not entered, it sets it to null
     if (!UAddress){
         UAddress: null;
     }
+     //If Name is not entered, sets value to null
     if (!UName) {
         UName: null;
     }
+        
+    //checks to see if user already exists
     let userExists = await User.findOne({
         where: {
             UUser
         }
     })
+
+    //Checks to make sure email is unique else if not entered gives it a value of null
     if (UEMAIL){
         let emailExists = await User.findOne({
             where: {
@@ -53,6 +60,8 @@ router.post("/createuser", async (req, res) => {
         res.status(202).send('User already exists.');
         return
     }
+
+    //adds new user
     try {
         await User.create({UUser, UPassword, UEMAIL, UAddress, UName});
         const nUser = await User.findOne({
