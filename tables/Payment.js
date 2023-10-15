@@ -16,12 +16,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     PName: {
       type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    PBilling: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
-    },
+      allowNull: true,
+    }
   });
 
   return Payment;
