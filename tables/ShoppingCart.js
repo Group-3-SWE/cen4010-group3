@@ -3,16 +3,13 @@ module.exports = (sequelize, DataTypes) => {
     SId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
-      unique: true,
-      allowNull: false,
     },
-    SUser: {
-      type: DataTypes.STRING(25),
+    UId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'users',
-        key: 'UUser',
+        key: 'UId',
       },
       onDelete: 'CASCADE',
     },

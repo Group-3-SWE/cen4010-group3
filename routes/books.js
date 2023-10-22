@@ -13,11 +13,11 @@ router.get("/", (req, res) => {
 router.get("/genre/:genre", async (req, res, next) =>{
     try {
         // The genre to look is extracted from the URL.
-        // For instance, /books/genre/sci-fi would result in the request parameter being sci-fi.
+        // For instance, /books/genre/1 would result in the request parameter being 1.
         const { genre } = req.params
 
         // Query for all the entries that match the desired genre.
-        const listOfBooks = await Books.findAll({ where: {BGenre: genre} })
+        const listOfBooks = await Books.findAll({ where: {GId: genre} })
         return res.status(200).json(listOfBooks)
     } catch(err){
         // If an error happens, pass the request to the error handling route.
