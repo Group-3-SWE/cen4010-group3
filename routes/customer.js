@@ -15,6 +15,21 @@ router.get("/", async (req, res, next) =>{
     }
 })
 
+router.get("/:id", async (req, res, next) =>{
+    try {
+        // Find a list of credit cards for a user
+        const vUser = await User.findOne({
+            where: {
+                UUser: req.params.id
+            }
+        });
+        return res.status(201).json(vUser)
+    } catch(err){
+        // If an error happens, pass the request to the error handling route.
+        next(err)
+    }
+})
+
 //Creates a new user for the Users db
 router.post("/createuser", async (req, res) => {
     
