@@ -1,23 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
   const Payment = sequelize.define('Payment', {
-    PCard: {
+    PId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: false, // If you don't want it to auto-increment
     },
-    PUser: {
-      type: DataTypes.STRING(25),
+    PCard: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      unique: true,
+    },
+    UId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'users',
-        key: 'UUser',
+        key: 'UId',
       },
       onDelete: 'CASCADE',
     },
-    PName: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-    }
   });
 
   return Payment;

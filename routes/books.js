@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const { Books } = require("../tables");
+const { Books, Comment, Sequelize} = require("../tables");
 
 router.get("/", (req, res) => {
     res.send("This is the books route!");
@@ -13,11 +13,11 @@ router.get("/", (req, res) => {
 router.get("/genre/:genre", async (req, res, next) =>{
     try {
         // The genre to look is extracted from the URL.
-        // For instance, /books/genre/sci-fi would result in the request parameter being sci-fi.
+        // For instance, /books/genre/1 would result in the request parameter being 1.
         const { genre } = req.params
 
         // Query for all the entries that match the desired genre.
-        const listOfBooks = await Books.findAll({ where: {BGenre: genre} })
+        const listOfBooks = await Books.findAll({ where: {GId: genre} })
         return res.status(200).json(listOfBooks)
     } catch(err){
         // If an error happens, pass the request to the error handling route.
@@ -39,6 +39,28 @@ router.get("/bestsellers", async (req, res, next) =>{
         return res.status(200).json(bestSellers)
     } catch(err){
         // If an error happens, pass the request to the error handling route.
+        next(err)
+    }
+})
+
+router.get("/rating/:ratingThreshold", async (req, res, next) =>{
+    try {
+        const { ratingThreshold } = req.params
+
+        const filteredBooks = await Books.findAll({
+            include: [{
+                model: Comment,
+                attributes: [],
+                where: {
+                    BISBN: Sequelize.col('Books.BISBN')
+                },
+            }],
+            group: ['Books.BISBN'],
+            having: Sequelize.literal(`AVG(comments.CRating) >= ${ratingThreshold}`),
+        })
+
+        return res.status(200).json(filteredBooks)
+    } catch(err){
         next(err)
     }
 })

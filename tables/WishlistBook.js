@@ -1,14 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
   const WishlistBook = sequelize.define('WishlistBook', {
-    WName: {
-      type: DataTypes.STRING(200),
+    WId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
+    WlId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    WBook: {
+    BISBN: {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'books',
+        model: 'books', 
         key: 'BISBN',
       },
       onDelete: 'CASCADE',

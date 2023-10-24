@@ -1,3 +1,4 @@
+const { Comment } = require("./Comment.js");
 module.exports = (sequelize, DataTypes) => {
     const Books = sequelize.define('Books', {
       BISBN: {
@@ -17,14 +18,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT(10),
         allowNull: false,
       },
-      BGenre: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-      },
-      BPublisher: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-      },
       BYear: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -33,15 +26,40 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      BRatingSum: {
+      GId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: 'genres',
+          key: 'GId',
+        },
+        onDelete: 'CASCADE',
       },
-      BRatingCount: {
+      AId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: 'authors',
+          key: 'AId',
+        },
+        onDelete: 'CASCADE',
+      },
+      PuId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'publishers',
+          key: 'PuId',
+        },
+        onDelete: 'CASCADE',
       },
     });
-  
+    
+    Books.associate = (tables) => {
+      Books.hasMany(tables.Comment, {
+        foreignKey: 'BISBN',
+        onDelete: 'cascade',
+      });
+    }
     return Books;
   };
