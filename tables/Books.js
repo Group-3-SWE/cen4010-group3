@@ -1,3 +1,4 @@
+const { Comment } = require("./Comment.js");
 module.exports = (sequelize, DataTypes) => {
     const Books = sequelize.define('Books', {
       BISBN: {
@@ -53,6 +54,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
       },
     });
-  
+    
+    Books.associate = (tables) => {
+      Books.hasMany(tables.Comment, {
+        foreignKey: 'BISBN',
+        onDelete: 'cascade',
+      });
+    }
     return Books;
   };

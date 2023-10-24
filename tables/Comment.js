@@ -1,3 +1,4 @@
+const { Books } = require("./Books.js");
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
     CId: {
@@ -31,5 +32,11 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
+  Comment.associate = (tables) => {
+    Comment.belongsTo(tables.Books, {
+      foreignKey: 'BISBN'
+    });
+  }
+  
   return Comment;
 };
