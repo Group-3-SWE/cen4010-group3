@@ -27,7 +27,7 @@ router.get("/:id", async (req, res, next) =>{
 //Add a new credit card
 router.post("/newCard", async (req, res) => {
     
-    const {PUser, PCard, PName} = req.body;
+    const {PUser, PCard} = req.body;
 
     //makes sure not null values are entered
     if (!PUser || !PCard){
@@ -39,11 +39,6 @@ router.post("/newCard", async (req, res) => {
     if (isNaN(PCard)){
         res.status(202).send('This is not a number');
         return
-    }
-    
-    //If no name is entered, sets value to null
-    if (!PName){
-        PName: null;
     }
 
     //Looks at Users table to see if username exists
@@ -71,7 +66,7 @@ router.post("/newCard", async (req, res) => {
 
     //trys to add the card to the Payments DB
     try {
-        await Payment.create({PCard, PUser, PName});
+        await Payment.create({PCard, PUser});
         res.status(201).send('added');
         return
     }
