@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
       GId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
       },
       GName: {
         type: DataTypes.STRING,

@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     WId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     WlId: {
       type: DataTypes.INTEGER,

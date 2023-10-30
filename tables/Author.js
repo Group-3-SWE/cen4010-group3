@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
       AId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
       },
       AFirst: {
         type: DataTypes.STRING,

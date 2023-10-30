@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
       PuId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
       },
       PuName: {
         type: DataTypes.STRING,

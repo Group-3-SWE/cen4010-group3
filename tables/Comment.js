@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     CId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     CContent: {
       type: DataTypes.STRING,
