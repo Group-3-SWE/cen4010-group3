@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const BooksToShopping = sequelize.define('BooksToShopping', {
     AId: {
       type: DataTypes.INTEGER,
-      primaryKey: false,
+      primaryKey: true,
       autoIncrement: true,
     },
     SId: {
