@@ -20,5 +20,8 @@
     "nodemon": "^3.0.1",
     "sequelize": "^6.33.0",
     "sequelize-cli": "^6.6.1"
+  },
+  "devDependencies": {
+    "@babel/helper-compilation-targets": "^7.22.15"
   }
 }
