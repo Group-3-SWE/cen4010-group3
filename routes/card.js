@@ -27,7 +27,7 @@ router.get("/:id", async (req, res, next) =>{
 //Add a new credit card
 router.post("/newCard", async (req, res) => {
     
-    const {PUser, PCard} = req.body;
+    const {User, PCard} = req.body;
 
     //makes sure not null values are entered
     if (!PUser || !PCard){
@@ -42,12 +42,14 @@ router.post("/newCard", async (req, res) => {
     }
 
     //Looks at Users table to see if username exists
-    const UUser = PUser;
     const findUser = await User.findOne({
         where: {
-            UUser
+            User
         }
     })
+    //const UId = await sequelize.query('select UId from Users where UUser = User', { type: Sequelize.QueryTypes.SELECT });
+
+
     if (!findUser) {
         res.status(201).send('User does not exist');
         return
@@ -66,7 +68,7 @@ router.post("/newCard", async (req, res) => {
 
     //trys to add the card to the Payments DB
     try {
-        await Payment.create({PCard, PUser});
+        await Payment.create({PCard, UId});
         res.status(201).send('added');
         return
     }
