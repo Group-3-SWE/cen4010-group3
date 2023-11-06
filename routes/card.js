@@ -62,14 +62,14 @@ router.post("/newCard", async (req, res) => {
         }
     })
     if (cardExists){
-        res.status(201).send('Card already exists in system');
+        res.status(203).send('Card already exists in system');
         return
     }
 
     //trys to add the card to the Payments DB
     try {
         await Payment.create({PCard, UId});
-        res.status(201).send('added');
+        res.status(204).send('added');
         return
     }
     catch {
