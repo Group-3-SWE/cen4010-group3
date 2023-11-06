@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const { Books, Comment, Sequelize} = require("../tables");
+const { Books } = require("../tables");
 
 router.get("/", (req, res) => {
     res.send("This is the books route!");
@@ -69,6 +69,27 @@ router.post("/", async (req, res) => {
     const book = req.body;
     await Books.create(book);
     res.json(book);
+})
+
+router.get("/Book/:ISBNN", async(req, res, next) => {
+    try {
+        // Step 1: request the ISBN (bookID)
+        const { ISBNN } = req.paramsnpm
+
+        // Step 2: create an array with all the comments from the database
+        const listOfComments = await Comment.findAll({ attributes: ["CommentContent"], where: {ISBN: ISBNN}})
+        // Step 3: return the array with all comments
+        return res.status(200).json(listOfComments)
+
+        // const { ISBNN } = req.params
+
+        // var count = 0;
+        // var sum = 0;
+
+
+    } catch (err) {
+        next(err)
+    }
 })
 
 module.exports = router

@@ -26,32 +26,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      GId: {
+      BRatingSum: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: 'genres',
-          key: 'GId',
-        },
-        onDelete: 'CASCADE',
       },
-      AId: {
+      BRatingCount: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: 'authors',
-          key: 'AId',
-        },
-        onDelete: 'CASCADE',
-      },
-      PuId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'publishers',
-          key: 'PuId',
-        },
-        onDelete: 'CASCADE',
       },
     });
     
