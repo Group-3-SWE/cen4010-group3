@@ -15,6 +15,7 @@ app.use(express.json())
 app.use("/books", booksRoutes);
 app.use("/users", customerRoutes);
 app.use("/card", cardRoutes);
+app.use("/wishlists", wishlistRoutes);
 
 app.use((req, res, next) => {
     return next(new NotFoundError())
