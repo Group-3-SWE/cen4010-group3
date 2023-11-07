@@ -4,6 +4,7 @@ const db = require("./tables")
 const booksRoutes = require("./routes/books") 
 const customerRoutes = require("./routes/customer") 
 const cardRoutes = require("./routes/card") 
+const wishlistRoutes = require("./routes/wishlist")
 const { NotFoundError } = require("./utils/errors")
 
 const app = express()
