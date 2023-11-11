@@ -117,6 +117,7 @@ router.patch("/updateuser/:id", async (req, res, next) => {
             },
         });
     }
+
      //IF Email is entered, check to see if email exists in db and if it doesn't add it
     if (UEMAIL) {
         let emailExists = await User.findOne({
@@ -131,27 +132,30 @@ router.patch("/updateuser/:id", async (req, res, next) => {
         await User.update({ UEMAIL}, {
             where: {
                 UUser
-            },
+            }
         });
     }
-        //If Address is not entered, it sets it to null
+    
+    //If Address is not entered, it sets it to null
     if (UAddress){
         await User.update({ UAddress}, {
             where: {
                 UUser
-            },
+            }
         });
     }
-     //If Name is not entered, sets value to null
+    
+    //If Name is not entered, sets value to null
     if (UName) {
-        await User.update({ UName}, {
+        await User.update({ UName }, {
             where: {
                 UUser
-            },
+            }
         });
     }
         
-    return res.status(204)
+    res.send("Updated");
+    return
     
 })
 
