@@ -4,10 +4,6 @@ const router = express.Router()
 const { Payment, User } = require("../tables");
 
 
-router.get("/", async (req, res, next) =>{
-        return res.status(201).send('This is a Payments Database')
-})
-
 router.get("/:id", async (req, res, next) =>{
     try {
         // Find a list of credit cards for a user
@@ -47,7 +43,6 @@ router.post("/newCard", async (req, res) => {
             UUser
         }
     })
-
     if (!findUser) {
         res.status(201).send('User does not exist');
         return
