@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router()
 const { User } = require("../tables");
-const { and } = require('sequelize');
 
 
 router.get("/", async (req, res, next) =>{
