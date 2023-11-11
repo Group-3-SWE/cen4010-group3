@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router()
 const { User } = require("../tables");
+const { and } = require('sequelize');
 
 
 router.get("/", async (req, res, next) =>{
@@ -96,6 +97,7 @@ router.post("/createuser", async (req, res) => {
 //Updates a user in the Users db
 router.patch("/updateuser/:id", async (req, res, next) => {
     
+    //checks to see if id exists in UUname
     const UUser = req.params.id;
     let userExists = await User.findOne({
         where: {
@@ -109,7 +111,7 @@ router.patch("/updateuser/:id", async (req, res, next) => {
 
     const {UPassword, UEMAIL, UAddress, UName} = req.body;
 
-    //If Address is not entered, it sets it to null
+    //updates UPassword
     if (UPassword){
         await User.update({ UPassword}, {
             where: {
@@ -136,7 +138,7 @@ router.patch("/updateuser/:id", async (req, res, next) => {
         });
     }
     
-    //If Address is not entered, it sets it to null
+    //Updates the value of UAddress
     if (UAddress){
         await User.update({ UAddress}, {
             where: {
@@ -145,7 +147,7 @@ router.patch("/updateuser/:id", async (req, res, next) => {
         });
     }
     
-    //If Name is not entered, sets value to null
+    //Updates the value of UName
     if (UName) {
         await User.update({ UName }, {
             where: {
@@ -153,10 +155,15 @@ router.patch("/updateuser/:id", async (req, res, next) => {
             }
         });
     }
-        
-    res.send("Updated");
-    return
     
+    if (!UPassword && !UName && !UEMAIL && !UAddress) {
+        res.send("No valid information entered");
+        return;
+    }
+    else {
+        res.send("Updated");
+        return;
+    }    
 })
 
 module.exports = router
