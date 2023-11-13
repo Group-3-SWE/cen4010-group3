@@ -160,7 +160,8 @@ router.patch("/updateuser", async (req, res, next) => {
         }
     }
     
-    if (!UPassword && !UName && !UEMAIL && !UAddress) {
+    // checks to make sure some information is added.
+    if (!UPassword && !UName && !UAddress) {
         res.send("No valid information entered");
         return;
     }
