@@ -5,25 +5,25 @@ const { User } = require("../tables");
 
 
 router.get("/", async (req, res, next) =>{
-    try {
-        // Query for all users.
-        const vUser = await User.findAll();
-        return res.status(201).json(vUser)
-    } catch(err){
-        // If an error happens, pass the request to the error handling route.
-        next(err)
-    }
-})
 
-router.get("/:id", async (req, res, next) =>{
+    const {UUser} = req.body;
+    if (!UUser) {
+        res.send("Please enter UUser");
+        return;
+    }
     try {
         // Find a list of credit cards for a user
         const vUser = await User.findOne({
             where: {
-                UUser: req.params.id
+                UUser
             }
         });
-        return res.status(201).json(vUser)
+        if (!vUser){
+            res.send("User Does Not Exist");
+            return;
+        } else {
+            return res.status(201).json(vUser)
+        }     
     } catch(err){
         // If an error happens, pass the request to the error handling route.
         next(err)
@@ -94,10 +94,11 @@ router.post("/createuser", async (req, res) => {
 })
 
 //Updates a user in the Users db
-router.patch("/updateuser/:id", async (req, res, next) => {
+router.patch("/updateuser", async (req, res, next) => {
+    
+    const {UUser, UPassword, UEMAIL, UAddress, UName} = req.body;
     
     //checks to see if id exists in UUname
-    const UUser = req.params.id;
     let userExists = await User.findOne({
         where: {
             UUser
@@ -108,51 +109,55 @@ router.patch("/updateuser/:id", async (req, res, next) => {
         return
     }
 
-    const {UPassword, UEMAIL, UAddress, UName} = req.body;
-
     //updates UPassword
     if (UPassword){
-        await User.update({ UPassword}, {
+        try{
+            await User.update({ UPassword}, {
             where: {
                 UUser
-            },
-        });
+                },
+            });
+        }
+        catch(err){
+            // If an error happens, pass the request to the error handling route.
+            next(err)
+        }
     }
 
      //IF Email is entered, check to see if email exists in db and if it doesn't add it
     if (UEMAIL) {
-        let emailExists = await User.findOne({
-            where: {
-                UEMAIL
-            }
-        })
-        if (emailExists) {
-            res.status(203).send('Email already exists.');
-            return
-        }
-        await User.update({ UEMAIL}, {
-            where: {
-                UUser
-            }
-        });
+        res.send("Mail Cannot Be Changed.");
+        return;
     }
     
     //Updates the value of UAddress
     if (UAddress){
-        await User.update({ UAddress}, {
+        try{
+            await User.update({ UAddress}, {
             where: {
                 UUser
-            }
-        });
+                }
+            });
+        }
+        catch(err){
+            // If an error happens, pass the request to the error handling route.
+            next(err)
+        }
     }
     
     //Updates the value of UName
     if (UName) {
-        await User.update({ UName }, {
+        try{
+            await User.update({ UName }, {
             where: {
                 UUser
-            }
-        });
+                }
+            });
+        }
+        catch(err){
+            // If an error happens, pass the request to the error handling route.
+            next(err)
+        }
     }
     
     if (!UPassword && !UName && !UEMAIL && !UAddress) {
