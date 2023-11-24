@@ -22,7 +22,7 @@ router.get("/", async (req, res, next) =>{
             res.send("User Does Not Exist");
             return;
         } else {
-            return res.status(201).json(vUser)
+            return res.status(202).json(vUser)
         }     
     } catch(err){
         // If an error happens, pass the request to the error handling route.
@@ -37,7 +37,7 @@ router.post("/createuser", async (req, res) => {
 
     //Checks to see if Required fields are entere
     if (!UUser || !UPassword){
-        res.status(400).send('Please input required fields');
+        res.status(406).send('Please input required fields');
         return
     }
 
@@ -57,7 +57,7 @@ router.post("/createuser", async (req, res) => {
         }
     })
     if (userExists) {
-        res.status(202).send('User already exists.');
+        res.status(406).send('User already exists.');
         return
     }
 
@@ -69,7 +69,7 @@ router.post("/createuser", async (req, res) => {
             }
         })
         if (emailExists) {
-            res.status(203).send('Email already exists.');
+            res.status(406).send('Email already exists.');
             return
         }
     } else {
@@ -84,7 +84,7 @@ router.post("/createuser", async (req, res) => {
                 UUser
             }
         })
-        res.status(201).json(nUser);
+        res.status(201).send('');
         return
     }
     catch {
@@ -105,7 +105,7 @@ router.patch("/updateuser", async (req, res, next) => {
         }
     })
     if (!userExists) {
-        res.status(202).send('User does not exists.');
+        res.status(406).send('User does not exists.');
         return
     }
 
@@ -134,7 +134,7 @@ router.patch("/updateuser", async (req, res, next) => {
                 }
             })
             if (emailExists) {
-                res.status(203).send('Email already exists.');
+                res.status(406).send('Email already exists.');
                 return
             } else {
                 try{
@@ -191,7 +191,7 @@ router.patch("/updateuser", async (req, res, next) => {
         return;
     }
     else {
-        res.send("Updated");
+        res.status(201).send('');
         return;
     }    
 })
