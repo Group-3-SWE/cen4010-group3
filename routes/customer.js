@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router()
 const { User } = require("../tables");
 
-
+//Return User Data
 router.get("/", async (req, res, next) =>{
 
     const {UUser} = req.body;
@@ -12,7 +12,7 @@ router.get("/", async (req, res, next) =>{
         return;
     }
     try {
-        // Find a list of credit cards for a user
+        // Check if user exists
         const vUser = await User.findOne({
             where: {
                 UUser
@@ -30,7 +30,7 @@ router.get("/", async (req, res, next) =>{
     }
 })
 
-//Creates a new user for the Users db
+//Creates a new user in the Users DB
 router.post("/createuser", async (req, res) => {
     
     const {UUser, UPassword, UEMAIL, UAddress, UName} = req.body;
@@ -124,10 +124,35 @@ router.patch("/updateuser", async (req, res, next) => {
         }
     }
 
-     //IF Email is entered, check to see if email exists in db and if it doesn't add it
+     //If Email is entered, checks to see if email is null, if it is, then checkes to see if email exists in db and if it doesn't add it
+     //If Email is not null then mail cannot be updated and returns.
     if (UEMAIL) {
-        res.send("Mail Cannot Be Changed.");
-        return;
+        if (userExists.UEMAIL == null) {
+            let emailExists = await User.findOne({
+                where: {
+                    UEMAIL
+                }
+            })
+            if (emailExists) {
+                res.status(203).send('Email already exists.');
+                return
+            } else {
+                try{
+                    await User.update({ UEMAIL}, {
+                    where: {
+                        UUser
+                        },
+                    });
+                }
+                catch(err){
+                    // If an error happens, pass the request to the error handling route.
+                    next(err)
+                }
+            }
+        } else {
+            res.send("Mail Cannot Be Changed.");
+            return;
+        }
     }
     
     //Updates the value of UAddress
@@ -161,7 +186,7 @@ router.patch("/updateuser", async (req, res, next) => {
     }
     
     // checks to make sure some information is added.
-    if (!UPassword && !UName && !UAddress) {
+    if (!UPassword && !UName && !UAddress && !UEMAIL) {
         res.send("No valid information entered");
         return;
     }
