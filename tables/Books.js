@@ -60,6 +60,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'BISBN',
         onDelete: 'cascade',
       });
+      Books.hasMany(tables.WishlistBook, {
+        foreignKey: 'BISBN',
+        onDelete: 'cascade',
+      });
     }
     return Books;
   };

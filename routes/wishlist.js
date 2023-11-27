@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Books, Wishlist, WishlistBook } = require("../tables");
+const { Books, Wishlist, WishlistBook, ShoppingCart, WBooksToShopping } = require("../tables");
 
 router.get("/", async (req, res) => {
   try {
@@ -83,10 +83,13 @@ router.post("/addBook", async (req, res) => {
 
 
 // get wishlist content
-router.get("/wishlistContent", async (req, res) => {
+router.get("/wishlistContent", async (req, res, next) => {
   const { WlId } = req.body;
 
+
+  console.log('start');
   if (!WlId) {
+    console.log('wishlist not found');
     return res.status(400).json({
       status: 'error',
       message: 'WlId parameter is required'
@@ -95,47 +98,102 @@ router.get("/wishlistContent", async (req, res) => {
 
   try {
     // Check if the wishlist exists
-    const wishlist = await Wishlist.findOne({ where: { WlId: WlId } });
+    console.log('check if wishlist exists');
+    console.log(WlId);
+    const wishlist = await WishlistBook.findAll({ 
+      where: { WlId : WlId},
+      attributes: [],
+      include: [{ model: Books,
+         attributes: ['BName', 'BDesc', 'BPrice', 'BYear', 'BISBN']}]
+      });
     if (!wishlist) {
       return res.status(404).json({
         status: 'error',
         message: 'Wishlist not found'
       });
     }
+    return res.status(200).json(wishlist)
 
-    // Fetch the wishlist content
-    const wishlistContent = await WishlistBook.findAll({
-      where: { WlId: WlId },
-      include: [{
-        model: Books,
-        as: 'bookDetails'
-      }]
-    });
 
-    if (wishlistContent && wishlistContent.length > 0) {
-      const books = wishlistContent.map(entry => entry.bookDetails);
-      return res.status(200).json({
-        status: 'success',
-        data: books
-      });
-    } else {
-      return res.status(200).json({
-        status: 'success',
-        message: 'Wishlist is empty',
-        data: []
-      });
-    }
+    
   } catch (err) {
-    return res.status(500).json({
-      status: 'error',
-      message: 'Error fetching wishlist content',
-      error: err
-    });
+      next(err)
   }
 });
 
+router.delete("/moveToCart", async (req, res, next) => {
+  const { WlId, BISBN } = req.body;
+
+
+  try {
+    const wishlistBook = await WishlistBook.findAll({
+      where: { WlId: WlId, BISBN: BISBN },
+      include: [{ model: Wishlist }] 
+    });
+
+
+   // res.json(wishlistBook);
+
+    if (!wishlistBook) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Book not found in the wishlist'
+
+      });
+    }
+
+    const getUser = await
+    Wishlist.findOne({
+      where : {WlId: WlId}
+
+    });
 
 
 
+    let shoppingCart = await ShoppingCart.findAll({ where: { UserId: getUserId} });
+
+    if (!shoppingCart) {
+      const newShoppingCart = await ShoppingCart.create({
+        UserId: wishlistBook.Wishlist.UId,
+      });
+
+      if (!newShoppingCart) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Failed to create shopping cart',
+        });
+      }
+
+      shoppingCart = newShoppingCart;
+    }
+
+
+    const result = await ShoppingCart.create({
+      UserId: wishlistBook.Wishlist.UId,
+      BISBN: BISBN,
+    });
+
+    await WishlistBook.destroy({
+      where: { WlId: WlId, BISBN: BISBN },
+    });
+
+    if (result) {
+      return res.status(201).json({
+        status: 'success',
+        message: 'Book successfully added to shopping cart',
+        data: result,
+      });
+    } else {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Failed to add book to shopping cart',
+      });
+    }
+
+  } catch (err) {
+    next(err)
+  }
+});
 
 module.exports = router;
+

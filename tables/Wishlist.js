@@ -1,3 +1,4 @@
+const { Books } = require("./Books.js");
 module.exports = (sequelize, DataTypes) => {
   const Wishlist = sequelize.define('Wishlist', {
     WlId: {
@@ -19,6 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
     },
   });
-
+  
   return Wishlist;
 };

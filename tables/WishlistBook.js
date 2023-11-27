@@ -20,5 +20,13 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
+  WishlistBook.associate = (tables) => {
+    WishlistBook.belongsTo(tables.Books, {
+      foreignKey: 'BISBN'
+    });
+  }
+
+  
+
   return WishlistBook;
 };
