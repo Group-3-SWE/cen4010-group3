@@ -3,41 +3,41 @@ const express = require('express');
 const router = express.Router()
 const { User } = require("../tables");
 
-
+//Return User Data
 router.get("/", async (req, res, next) =>{
-    try {
-        // Query for all users.
-        const vUser = await User.findAll();
-        return res.status(201).json(vUser)
-    } catch(err){
-        // If an error happens, pass the request to the error handling route.
-        next(err)
-    }
-})
 
-router.get("/:id", async (req, res, next) =>{
+    const {UUser} = req.body;
+    if (!UUser) {
+        res.send("Please enter UUser");
+        return;
+    }
     try {
-        // Find a list of credit cards for a user
+        // Check if user exists
         const vUser = await User.findOne({
             where: {
-                UUser: req.params.id
+                UUser
             }
         });
-        return res.status(201).json(vUser)
+        if (!vUser){
+            res.send("User Does Not Exist");
+            return;
+        } else {
+            return res.status(202).json(vUser)
+        }     
     } catch(err){
         // If an error happens, pass the request to the error handling route.
         next(err)
     }
 })
 
-//Creates a new user for the Users db
+//Creates a new user in the Users DB
 router.post("/createuser", async (req, res) => {
     
     const {UUser, UPassword, UEMAIL, UAddress, UName} = req.body;
 
     //Checks to see if Required fields are entere
     if (!UUser || !UPassword){
-        res.status(200).send('Please input required fields');
+        res.status(406).send('Please input required fields');
         return
     }
 
@@ -56,6 +56,10 @@ router.post("/createuser", async (req, res) => {
             UUser
         }
     })
+    if (userExists) {
+        res.status(406).send('User already exists.');
+        return
+    }
 
     //Checks to make sure email is unique else if not entered gives it a value of null
     if (UEMAIL){
@@ -65,15 +69,11 @@ router.post("/createuser", async (req, res) => {
             }
         })
         if (emailExists) {
-            res.status(203).send('Email already exists.');
+            res.status(406).send('Email already exists.');
             return
         }
     } else {
         UEMAIL: null;
-    }
-    if (userExists) {
-        res.status(202).send('User already exists.');
-        return
     }
 
     //adds new user
@@ -84,13 +84,116 @@ router.post("/createuser", async (req, res) => {
                 UUser
             }
         })
-        res.status(201).json(nUser);
+        res.status(201).send('');
         return
     }
     catch {
         res.send("User Not Added");
         return
     }
+})
+
+//Updates a user in the Users db
+router.patch("/updateuser", async (req, res, next) => {
+    
+    const {UUser, UPassword, UEMAIL, UAddress, UName} = req.body;
+    
+    //checks to see if id exists in UUname
+    let userExists = await User.findOne({
+        where: {
+            UUser
+        }
+    })
+    if (!userExists) {
+        res.status(406).send('User does not exists.');
+        return
+    }
+
+    //updates UPassword
+    if (UPassword){
+        try{
+            await User.update({ UPassword}, {
+            where: {
+                UUser
+                },
+            });
+        }
+        catch(err){
+            // If an error happens, pass the request to the error handling route.
+            next(err)
+        }
+    }
+
+     //If Email is entered, checks to see if email is null, if it is, then checkes to see if email exists in db and if it doesn't add it
+     //If Email is not null then mail cannot be updated and returns.
+    if (UEMAIL) {
+        if (userExists.UEMAIL == null) {
+            let emailExists = await User.findOne({
+                where: {
+                    UEMAIL
+                }
+            })
+            if (emailExists) {
+                res.status(406).send('Email already exists.');
+                return
+            } else {
+                try{
+                    await User.update({ UEMAIL}, {
+                    where: {
+                        UUser
+                        },
+                    });
+                }
+                catch(err){
+                    // If an error happens, pass the request to the error handling route.
+                    next(err)
+                }
+            }
+        } else {
+            res.send("Mail Cannot Be Changed.");
+            return;
+        }
+    }
+    
+    //Updates the value of UAddress
+    if (UAddress){
+        try{
+            await User.update({ UAddress}, {
+            where: {
+                UUser
+                }
+            });
+        }
+        catch(err){
+            // If an error happens, pass the request to the error handling route.
+            next(err)
+        }
+    }
+    
+    //Updates the value of UName
+    if (UName) {
+        try{
+            await User.update({ UName }, {
+            where: {
+                UUser
+                }
+            });
+        }
+        catch(err){
+            // If an error happens, pass the request to the error handling route.
+            next(err)
+        }
+    }
+    
+    // checks to make sure some information is added.
+    if (!UPassword && !UName && !UAddress && !UEMAIL) {
+        res.send("No valid information entered");
+        return;
+    }
+    else {
+        res.status(201).send('');
+        return;
+    }    
 })
 
 module.exports = router

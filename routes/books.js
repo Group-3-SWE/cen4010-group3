@@ -43,6 +43,10 @@ router.get("/bestsellers", async (req, res, next) =>{
     }
 })
 
+/* 
+ * Dynamic route that handles GET requests to fetch a list of books of whose average rating is above certain criteria
+ * @return a JSON list of the books with enough average rating, along with a 200 status code, if successful.
+ */
 router.get("/rating/:ratingThreshold", async (req, res, next) =>{
     try {
         const { ratingThreshold } = req.params
@@ -63,6 +67,34 @@ router.get("/rating/:ratingThreshold", async (req, res, next) =>{
     } catch(err){
         next(err)
     }
+})
+
+/* 
+ * Endpoint that handles PUT requests to reduce the price of books associated with a given publisher ID
+ * @return a message stating the discount applied and the targeted publisher.
+ */
+router.put("/discount", async (req, res, next) => {
+    try {
+        const {PuId, Discount} = req.body;
+        // Find all books with the specified publisher
+        const books = await Books.findAll({
+          where: { PuId: PuId }
+        });
+        
+        if(books.length < 1){
+            return res.status(200).json("No books where found with that publisher")
+        }
+
+        // Update the prices
+        books.map(book => {
+          const newPrice = book.BPrice - (book.BPrice * Discount); // Apply the discount
+          book.update({ BPrice: newPrice });
+        });
+
+        return res.status(200).json(`Applied ${Discount * 100}% off to Books with Publisher ${PuId}`)
+      } catch (err) {
+        next(err)
+      }
 })
 
 router.post("/", async (req, res) => {

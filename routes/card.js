@@ -3,26 +3,6 @@ const express = require('express');
 const router = express.Router()
 const { Payment, User } = require("../tables");
 
-
-router.get("/", async (req, res, next) =>{
-        return res.status(201).send('This is a Payments Database')
-})
-
-router.get("/:id", async (req, res, next) =>{
-    try {
-        // Find a list of credit cards for a user
-        const card = await Payment.findAll({
-            where: {
-                PUser: req.params.id
-            }
-        });
-        return res.status(201).json(card)
-    } catch(err){
-        // If an error happens, pass the request to the error handling route.
-        next(err)
-    }
-})
-
 //Add a new credit card
 router.post("/newCard", async (req, res) => {
     
@@ -30,13 +10,13 @@ router.post("/newCard", async (req, res) => {
 
     //makes sure not null values are entered
     if (!AUser || !PCard){
-        res.status(200).send('Please input required fields');
+        res.status(400).send('Please input required fields');
         return
     }
 
     //checks to see if the PCard is a number
     if (isNaN(PCard)){
-        res.status(202).send('This is not a number');
+        res.status(406).send('This is not a number');
         return
     }
 
@@ -47,9 +27,8 @@ router.post("/newCard", async (req, res) => {
             UUser
         }
     })
-
     if (!findUser) {
-        res.status(201).send('User does not exist');
+        res.status(406).send('User does not exist');
         return
     } 
 
@@ -62,18 +41,18 @@ router.post("/newCard", async (req, res) => {
         }
     })
     if (cardExists){
-        res.status(203).send('Card already exists in system');
+        res.status(406).send('Card already exists in system');
         return
     }
 
     //trys to add the card to the Payments DB
     try {
         await Payment.create({PCard, UId});
-        res.status(204).send('added');
+        res.status(201).send('');
         return
     }
     catch {
-        res.status(401).send('Error Adding Card');
+        res.status(406).send('Error Adding Card');
         return
     }
 })
