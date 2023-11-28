@@ -22,31 +22,54 @@ router.post("/", async (req, res) => {
   const { WlName, UId } = req.body;
 
   try {
-    const result = await Wishlist.create({
-      WlName,
-      UId
+    // Check if a wishlist with the same name and user ID already exists
+    const existingWishlist = await Wishlist.findOne({
+      where: { WlName, UId },
     });
 
-    if (result) { // Assuming that successful creation returns a result
-      return res.status(201).json({
-        status: 'success',
-        message: 'Wishlist created',
-        data: result, // Return the created entry
-      });
-    } else {
+    if (existingWishlist) {
       return res.status(400).json({
         status: 'error',
-        message: 'Failed to create wishlist',
+        message: 'Wishlist with the same name and user already exists',
+        data: existingWishlist,
       });
     }
-  } catch (err) {
-    res.status(400).json({
+
+    try {
+      const result = await Wishlist.create({
+        WlName,
+        UId
+      });
+
+      if (result) { // Assuming that successful creation returns a result
+        return res.status(201).json({
+          status: 'success',
+          message: 'Wishlist created',
+          data: result, // Return the created entry
+        });
+      } else {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Failed to create wishlist',
+        });
+      }
+    } catch (err) {
+      res.status(400).json({
+        status: 'error',
+        message: 'Error while creating wishlist',
+        error: err,
+      });
+    }
+  } catch (outerErr) {
+    // Handle any error from the outer try block
+    res.status(500).json({
       status: 'error',
-      message: 'Error while creating wishlist',
-      error: err,
+      message: 'Error in the outer try block',
+      error: outerErr,
     });
   }
 });
+
 
 
 // addToWishlist
